@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jornada FTU</title>
+<style>
+:root {
+  --azul:#4169a8;
+  --roxo:#7956b8;
+  --fundo:#f5f3ff;
+  --texto:#263451;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--fundo);
+  color:var(--texto);
+}
+header {
+  background:linear-gradient(120deg,#354f91,#8661bd);
+  color:white;
+  padding:28px 18px;
+  text-align:center;
+}
+header h1 { margin:0 0 8px; font-size:30px; }
+header p { margin:0; line-height:1.5; }
+main { max-width:1000px; margin:auto; padding:20px; }
+section {
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 4px 16px #26345112;
+}
+h2 { margin-top:0; font-size:21px; }
+.intro { text-align:center; }
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+.stat {
+  background:#f0edff;
+  padding:15px 5px;
+  border-radius:12px;
+  text-align:center;
+}
+.stat strong { display:block; font-size:25px; color:var(--roxo); }
+.stat span { font-size:12px; }
+.editor {
+  display:grid;
+  grid-template-columns: minmax(150px, .8fr) 1.2fr;
+  gap:20px;
+  align-items:center;
+}
+.preview {
+  background:linear-gradient(#e7efff,#f5eaff);
+  border-radius:16px;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+}
+.avatar {
+  position:relative;
+  width:110px;
+  height:155px;
+}
+.hair {
+  position:absolute;
+  z-index:2;
+  top:5px;
+  left:24px;
+  width:62px;
+  height:43px;
+  background:#593a2b;
+  border-radius:48% 48% 25% 25%;
+}
+.face {
+  position:absolute;
+  top:14px;
+  left:29px;
+  width:52px;
+  height:58px;
+  background:#d99b70;
+  border-radius:45% 45% 48% 48%;
+  z-index:1;
+}
+.eyes {
+  position:absolute;
+  top:36px;
+  left:42px;
+  z-index:3;
+  font-size:13px;
+  letter-spacing:8px;
+  color:#302b2b;
+}
+.glasses {
+  position:absolute;
+  top:32px;
+  left:31px;
+  z-index:4;
+  font-size:25px;
+  color:#303746;
+}
+.body {
+  position:absolute;
+  top:72px;
+  left:21px;
+  width:68px;
+  height:48px;
+  background:#e9a4b8;
+  border-radius:18px 18px 8px 8px;
+}
+.legs {
+  position:absolute;
+  top:114px;
+  left:32px;
+  width:45px;
+  height:34px;
+  background:linear-gradient(90deg,#52618b 45%,transparent 45% 55%,#52618b 55%);
+  border-radius:4px;
+}
+.arms {
+  position:absolute;
+  top:76px;
+  left:8px;
+  width:94px;
+  height:13px;
+  background:#d99b70;
+  border-radius:10px;
+}
+.controls { display:grid; gap:12px; }
+label { font-size:13px; font-weight:bold; display:block; margin-bottom:5px; }
+input,select {
+  width:100%;
+  padding:11px;
+  border:1px solid #d8d9e7;
+  border-radius:9px;
+  background:white;
+  color:var(--texto);
+  font-size:15px;
+}
+button {
+  border:0;
+  padding:12px 16px;
+  border-radius:10px;
+  background:var(--roxo);
+  color:white;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+}
+button:active { transform:scale(.98); }
+.board {
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:6px;
+}
+.cell {
+  aspect-ratio:1;
+  min-width:0;
+  border-radius:10px;
+  background:#e9e5fb;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:3px;
+  border:2px solid transparent;
+  font-size:11px;
+}
+.cell .num { font-weight:bold; font-size:15px; }
+.cell.special { background:#fff0cf; }
+.cell.mystery { background:#dff3e7; }
+.cell.question { background:#dcecff; }
+.cell.active { border-color:#7854bd; background:#d9c8ff; }
+.cell .pawn { font-size:19px; }
+.legend { display:flex; flex-wrap:wrap; gap:10px; margin:15px 0; font-size:12px; }
+.legend span { padding:7px 9px; border-radius:8px; background:#f4f2fa; }
+.action-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:15px; }
+.action-row button { flex:1; }
+#message {
+  background:#f0edff;
+  border-radius:10px;
+  padding:12px;
+  margin-top:12px;
+  line-height:1.5;
+}
+footer { text-align:center; padding:20px; font-size:12px; color:#68718a; }
+@media(max-width:600px) {
+  main { padding:12px; }
+  .editor { grid-template-columns:1fr; }
+  .preview { min-height:195px; }
+  .board { gap:3px; }
+  .cell { border-radius:6px; font-size:9px; }
+  .cell .num { font-size:12px; }
+  .cell .pawn { font-size:15px; }
+  section { padding:14px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗺️ Jornada FTU</h1>
+  <p>Uma aventura de fé, conhecimento e desafios!</p>
+</header>
+
+<main>
+<section class="intro">
+  <h2>🎲 Sua jornada começa aqui!</h2>
+  <p>Personalize seu personagem e prepare-se para percorrer o tabuleiro.</p>
+  <div class="stats">
+    <div class="stat"><strong>56</strong><span>Casas na jornada</span></div>
+    <div class="stat"><strong>01/11</strong><span>Início</span></div>
+    <div class="stat"><strong>28/12</strong><span>Grande final</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>🧑 Crie seu personagem</h2>
+  <div class="editor">
+    <div class="preview">
+      <div class="avatar" id="avatar">
+        <div class="hair" id="hair"></div>
+        <div class="face" id="face"></div>
+        <div class="eyes">• •</div>
+        <div class="glasses" id="glasses"></div>
+        <div class="arms" id="arms"></div>
+        <div class="body" id="shirt"></div>
+        <div class="legs"></div>
+      </div>
+      <strong id="previewName">Aventureiro</strong>
+    </div>
+    <div class="controls">
+      <div>
+        <label for="playerName">Nome do personagem</label>
+        <input id="playerName" maxlength="18" placeholder="Digite seu nome" oninput="updateAvatar()">
+      </div>
+      <div>
+        <label for="skin">Tom de pele</label>
+        <select id="skin" onchange="updateAvatar()">
+          <option value="#f5d0ae">Claro</option>
+          <option value="#d99b70" selected>Médio</option>
+          <option value="#a96745">Moreno</option>
+          <option value="#75452f">Escuro</option>
+          <option value="#edbd9e">Pêssego</option>
+        </select>
+      </div>
+      <div>
+        <label for="hairStyle">Cabelo</label>
+        <select id="hairStyle" onchange="updateAvatar()">
+          <option value="#593a2b">Castanho</option>
+          <option value="#171717">Preto</option>
+          <option value="#d5a13b">Loiro</option>
+          <option value="#a64b36">Ruivo</option>
+          <option value="#684c91">Roxo fantasia</option>
+        </select>
+      </div>
+      <div>
+        <label for="shirtColor">Roupa</label>
+        <select id="shirtColor" onchange="updateAvatar()">
+          <option value="#e9a4b8">Rosa</option>
+          <option value="#5277c7">Azul</option>
+          <option value="#79b99a">Verde</option>
+          <option value="#e7bb55">Amarelo</option>
+          <option value="#303746">Preto</option>
+          <option value="#f0f0f0">Branco</option>
+        </select>
+      </div>
+      <div>
+        <label for="wearGlasses">Óculos</label>
+        <select id="wearGlasses" onchange="updateAvatar()">
+          <option value="no">Sem óculos</option>
+          <option value="yes">Com óculos</option>
+        </select>
+      </div>
+      <button onclick="saveAvatar()">✨ Confirmar personagem</button>
+      <div id="avatarMessage" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>🧭 Tabuleiro da aventura</h2>
+  <p>Este é o mapa inicial de demonstração. As casas especiais serão configuradas nas próximas etapas.</p>
+  <div class="legend">
+    <span>🟣 Sua posição</span>
+    <span>🟡 Casa especial</span>
+    <span>🟢 Mistério</span>
+    <span>🔵 Bíblia</span>
+  </div>
+  <div class="board" id="board"></div>
+  <div class="action-row">
+    <button onclick="movePawn(-1)">⬅ Voltar uma casa</button>
+    <button onclick="movePawn(1)">Avançar uma casa ➡</button>
+  </div>
+  <div id="message" aria-live="polite">Seu personagem está na casa 1. Vamos começar a aventura!</div>
+</section>
+</main>
+
+<footer>Jornada FTU • Fé, propósito e aventura</footer>
+
+<script>
+let position = 1;
+const special = [5,12,19,27,34,42,49,55];
+const mystery = [8,16,24,38,46,52];
+const questions = [3,10,14,22,30,36,44,50];
+let avatarName = "Aventureiro";
+
+function updateAvatar() {
+  document.getElementById("face").style.background =
+    document.getElementById("skin").value;
+  document.getElementById("arms").style.background =
+    document.getElementById("skin").value;
+  document.getElementById("hair").style.background =
+    document.getElementById("hairStyle").value;
+  document.getElementById("shirt").style.background =
+    document.getElementById("shirtColor").value;
+  document.getElementById("glasses").textContent =
+    document.getElementById("wearGlasses").value === "yes" ? "◎" : "";
+  avatarName = document.getElementById("playerName").value.trim() || "Aventureiro";
+  document.getElementById("previewName").textContent = avatarName;
+}
+
+function saveAvatar() {
+  updateAvatar();
+  document.getElementById("avatarMessage").textContent =
+    "Personagem confirmado nesta demonstração! O salvamento permanente será adicionado depois.";
+  renderBoard();
+}
+
+function renderBoard() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  for (let i = 1; i <= 56; i++) {
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    if (special.includes(i)) cell.classList.add("special");
+    if (mystery.includes(i)) cell.classList.add("mystery");
+    if (questions.includes(i)) cell.classList.add("question");
+    if (i === position) cell.classList.add("active");
+    const num = document.createElement("span");
+    num.className = "num";
+    num.textContent = i;
+    cell.appendChild(num);
+    if (i === position) {
+      const pawn = document.createElement("span");
+      pawn.className = "pawn";
+      pawn.textContent = "🧑";
+      cell.appendChild(pawn);
+    } else if (special.includes(i)) {
+      cell.append("⭐");
+    } else if (mystery.includes(i)) {
+      cell.append("🔍");
+    } else if (questions.includes(i)) {
+      cell.append("📖");
+    }
+    board.appendChild(cell);
+  }
+}
+
+function movePawn(step) {
+  position = Math.max(1, Math.min(56, position + step));
+  renderBoard();
+  let msg = position === 56
+    ? "🏆 Você chegou ao final da demonstração do tabuleiro!"
+    : "Seu personagem está na casa " + position + ".";
+  if (special.includes(position)) msg += " ⭐ Casa especial!";
+  if (mystery.includes(position)) msg += " 🔍 Você encontrou um mistério!";
+  if (questions.includes(position)) msg += " 📖 Hora de testar seu conhecimento bíblico!";
+  document.getElementById("message").textContent = msg;
+}
+
+updateAvatar();
+renderBoard();
+</script>
+</body>
+</html>
